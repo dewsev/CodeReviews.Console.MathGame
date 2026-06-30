@@ -25,13 +25,16 @@ for (int i = 0; i < questionCount; i++)
         }
         else
         {
-            Console.WriteLine("Provide a valid integer.");
+            ClearCurrentConsoleLine();
+            WriteColoredLine("Provide a valid integer.", ConsoleColor.Red);
+            
+            Console.Write($"{firstNumber} + {secondNumber} = ");
             readResult = "";
         }
     } while (string.IsNullOrEmpty(readResult));
 }
 
-Console.WriteLine($"Your score: {score}/{questionCount}.");
+Console.WriteLine($"\nYour score: {score}/{questionCount}");
 
 
 void CheckAnswer(int firstNumber, int secondNumber, int answer)
@@ -42,17 +45,13 @@ void CheckAnswer(int firstNumber, int secondNumber, int answer)
     {
         score++;
         Console.Write($"{firstNumber} + {secondNumber} = {answer}\t");
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("Correct!\n");
+        WriteColoredLine("Correct!", ConsoleColor.Green);
     }
     else
     {
         Console.Write($"{firstNumber} + {secondNumber} = {answer}\t");
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.Write($"Wrong! It is {expectedResult}.\n");
+        WriteColoredLine($"Wrong! It is {expectedResult}.", ConsoleColor.Red);
     }
-    
-    Console.ResetColor();
 }
 
 void ClearCurrentConsoleLine()
@@ -61,4 +60,11 @@ void ClearCurrentConsoleLine()
     Console.SetCursorPosition(0, currentLineCursor);
     Console.Write(new string(' ', Console.BufferWidth));
     Console.SetCursorPosition(0, currentLineCursor);
+}
+
+void WriteColoredLine(string text, ConsoleColor color)
+{
+    Console.ForegroundColor = color;
+    Console.WriteLine(text);
+    Console.ResetColor();
 }
