@@ -13,7 +13,9 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0d19382-3130-40d8-b057-e8a6b0e5a561" name="Changes" comment="" />
+    <list default="true" id="b0d19382-3130-40d8-b057-e8a6b0e5a561" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -101,8 +103,25 @@
       <updated>1771580902558</updated>
       <workItem from="1782818668280" duration="5000" />
       <workItem from="1782818723888" duration="399000" />
-      <workItem from="1782819170727" duration="42000" />
+      <workItem from="1782819170727" duration="2971000" />
     </task>
+    <task id="LOCAL-00001" summary="Initial project setup">
+      <option name="closed" value="true" />
+      <created>1782819229941</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1782819229941</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Add basic game loop">
+      <option name="closed" value="true" />
+      <created>1782822079939</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1782822079939</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -112,6 +131,9 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Initial project setup" />
+    <MESSAGE value="Add basic game loop" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add basic game loop" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
