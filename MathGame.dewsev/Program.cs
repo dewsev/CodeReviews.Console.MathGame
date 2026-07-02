@@ -30,7 +30,7 @@ void Play()
                 CheckAnswer(operationType, firstNumber, secondNumber, answer);
                 if (randomizedOperations)
                 {
-                    operationType = GetRandomOperationType();
+                    operationType = GetRandomOperationType(operationType);
                 }
             }
             else
@@ -45,6 +45,8 @@ void Play()
     }
     
     Console.WriteLine($"\nYour score: {score}/{questionCount}");
+    Console.WriteLine("Press any key to exit.");
+    Console.ReadLine();
 }
 
 
@@ -62,11 +64,12 @@ OperationType GetOperationTypeChoiceFromUser()
     Console.WriteLine("  2.Subtraction");
     Console.WriteLine("  3.Multiplication");
     Console.WriteLine("  4.Division");
-    Console.WriteLine("  5.Random");
-    Console.Write("\nYour choice: ");
+    Console.WriteLine("  5.Random\n\n");
     
     while (true)
     {
+        ClearCurrentConsoleLine();
+        Console.Write("Your choice: ");
         string? choice = Console.ReadLine()?.Trim();
 
         bool isValidInteger = int.TryParse(choice, out int integerChoice);
