@@ -1,7 +1,7 @@
 int score = 0;
-int questionCount = 5;
+int questionCount = 15;
 Random random = new Random();
-bool randomizeOperations = false;
+bool randomizedOperations = false;
 
 Play();
 
@@ -9,6 +9,7 @@ Play();
 void Play()
 {
     DisplayWelcomeMessage();
+ 
     OperationType operationType = GetOperationTypeChoiceFromUser();
     
     Console.Clear();
@@ -16,9 +17,8 @@ void Play()
     {
         int firstNumber = random.Next(101);
         int secondNumber = random.Next(101);
-        // TODO: Show correct operation signs in questions
         // TODO: Division should result in integer values, f.ex. 7/2 should not be displayed
-        Console.Write($"{firstNumber} + {secondNumber} = ");
+        DisplayOperationString(operationType, firstNumber, secondNumber);
 
         string? readResult;
         do
@@ -27,8 +27,11 @@ void Play()
             bool isValidInteger = int.TryParse(readResult, out int answer);
             if (isValidInteger)
             {
-                CheckAnswer(firstNumber, secondNumber, answer, operationType);
-                // TODO: Randomize operation after each question if randomizeOperations is set to true
+                CheckAnswer(operationType, firstNumber, secondNumber, answer);
+                if (randomizedOperations)
+                {
+                    operationType = GetRandomOperationType();
+                }
             }
             else
             {
@@ -75,44 +78,66 @@ OperationType GetOperationTypeChoiceFromUser()
                 2 => OperationType.Subtraction,
                 3 => OperationType.Multiplication,
                 4 => OperationType.Division,
-                5 => SetupRandomOperationType(),
+                5 => SetupRandomOperations(),
             };
         }
     }
 }
 
 
-OperationType SetupRandomOperationType()
+OperationType SetupRandomOperations()
 {
-    randomizeOperations = true;
+    randomizedOperations = true;
     return GetRandomOperationType();
 }
 
 
-OperationType GetRandomOperationType()
+OperationType GetRandomOperationType(OperationType? currentOperationType = null)
 {
-    int randomIndex = random.Next(1, Enum.GetValues<OperationType>().Length - 1);
-    return (OperationType)randomIndex;
+    while (true)
+    {
+        int randomIndex = random.Next(Enum.GetValues<OperationType>().Length);
+        OperationType randomOperation = (OperationType)randomIndex;
+
+        if (randomOperation != currentOperationType)
+        {
+            return randomOperation;
+        }
+    }
 }
 
 
-void CheckAnswer(int firstNumber, int secondNumber, int answer, OperationType operationType)
+void CheckAnswer(OperationType operationType, int firstNumber, int secondNumber, int answer)
 {
     ClearCurrentConsoleLine();
 
     int expectedResult = ComputeExpectedResult(firstNumber, secondNumber, operationType);
     
+    DisplayOperationString(operationType, firstNumber, secondNumber, answer);
+    Console.Write("\t");
     if (expectedResult == answer)
     {
         score++;
-        Console.Write($"{firstNumber} + {secondNumber} = {answer}\t");
         WriteColoredLine("Correct!", ConsoleColor.Green);
     }
     else
     {
-        Console.Write($"{firstNumber} + {secondNumber} = {answer}\t");
         WriteColoredLine($"Wrong! It is {expectedResult}.", ConsoleColor.Red);
     }
+}
+
+
+void DisplayOperationString(OperationType operationType, int firstNumber, int secondNumber, int? result = null)
+{
+    char op = operationType switch
+    {
+        OperationType.Addition => '+',
+        OperationType.Subtraction => '-',
+        OperationType.Multiplication => 'x',
+        OperationType.Division => '/',
+    };
+    
+    Console.Write($"{firstNumber} {op} {secondNumber} = {(result != null ? result : "")}");
 }
 
 
