@@ -1,4 +1,4 @@
-﻿int score = 0;
+int score = 0;
 int questionCount = 5;
 Random random = new Random();
 bool randomizeOperations = false;
