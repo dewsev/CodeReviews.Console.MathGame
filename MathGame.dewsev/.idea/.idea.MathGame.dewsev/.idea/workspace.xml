@@ -107,7 +107,7 @@
       <workItem from="1782819170727" duration="4614000" />
       <workItem from="1782990041679" duration="5409000" />
       <workItem from="1783023991084" duration="6922000" />
-      <workItem from="1783163397516" duration="908000" />
+      <workItem from="1783163397516" duration="9275000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project setup">
       <option name="closed" value="true" />
@@ -181,7 +181,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783163485044</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Show only int result for division">
+      <option name="closed" value="true" />
+      <created>1783164358894</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1783164358894</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -198,7 +206,8 @@
     <MESSAGE value="Add randomized operations" />
     <MESSAGE value="Fix duplicate operation when random" />
     <MESSAGE value="Set minimum number value to 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Set minimum number value to 1" />
+    <MESSAGE value="Show only int result for division" />
+    <option name="LAST_COMMIT_MESSAGE" value="Show only int result for division" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
