@@ -15,8 +15,8 @@ void Play()
     Console.Clear();
     for (int i = 0; i < questionCount; i++)
     {
-        int firstNumber = random.Next(101);
-        int secondNumber = random.Next(101);
+        int firstNumber = random.Next(1, 101);
+        int secondNumber = random.Next(1, 101);
         // TODO: Division should result in integer values, f.ex. 7/2 should not be displayed
         DisplayOperationString(operationType, firstNumber, secondNumber);
 
