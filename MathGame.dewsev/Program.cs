@@ -1,6 +1,7 @@
+Random random = new Random();
+
 int score = 0;
 int questionCount = 15;
-Random random = new Random();
 bool randomizedOperations = false;
 
 Play();
@@ -15,10 +16,8 @@ void Play()
     Console.Clear();
     for (int i = 0; i < questionCount; i++)
     {
-        int firstNumber = random.Next(1, 101);
-        int secondNumber = random.Next(1, 101);
-        // TODO: Division should result in integer values, f.ex. 7/2 should not be displayed
-        DisplayOperationString(operationType, firstNumber, secondNumber);
+        (int operand1, int operand2) = GetRandomOperands(operationType);
+        DisplayOperationString(operationType, operand1, operand2);
 
         string? readResult;
         do
@@ -27,7 +26,7 @@ void Play()
             bool isValidInteger = int.TryParse(readResult, out int answer);
             if (isValidInteger)
             {
-                CheckAnswer(operationType, firstNumber, secondNumber, answer);
+                CheckAnswer(operationType, operand1, operand2, answer);
                 if (randomizedOperations)
                 {
                     operationType = GetRandomOperationType(operationType);
@@ -38,7 +37,7 @@ void Play()
                 ClearCurrentConsoleLine();
                 WriteColoredLine("Provide a valid integer.", ConsoleColor.Red);
             
-                Console.Write($"{firstNumber} + {secondNumber} = ");
+                Console.Write($"{operand1} + {operand2} = ");
                 readResult = "";
             }
         } while (string.IsNullOrEmpty(readResult));
@@ -47,6 +46,24 @@ void Play()
     Console.WriteLine($"\nYour score: {score}/{questionCount}");
     Console.WriteLine("Press any key to exit.");
     Console.ReadLine();
+}
+
+
+(int, int) GetRandomOperands(OperationType operationType)
+{
+    int operand1 = random.Next(1, 101);
+    int operand2 = random.Next(1, 101);
+
+    if (operationType == OperationType.Division)
+    {
+        while (operand1 % operand2 != 0)
+        {
+            operand1 = random.Next(1, 101);
+            operand2 = random.Next(1, 101);
+        }
+    }
+
+    return (operand1, operand2);
 }
 
 
@@ -110,13 +127,13 @@ OperationType GetRandomOperationType(OperationType? currentOperationType = null)
 }
 
 
-void CheckAnswer(OperationType operationType, int firstNumber, int secondNumber, int answer)
+void CheckAnswer(OperationType operationType, int operand1, int operand2, int answer)
 {
     ClearCurrentConsoleLine();
 
-    int expectedResult = ComputeExpectedResult(firstNumber, secondNumber, operationType);
+    int expectedResult = ComputeExpectedResult(operand1, operand2, operationType);
     
-    DisplayOperationString(operationType, firstNumber, secondNumber, answer);
+    DisplayOperationString(operationType, operand1, operand2, answer);
     Console.Write("\t");
     if (expectedResult == answer)
     {
@@ -130,7 +147,7 @@ void CheckAnswer(OperationType operationType, int firstNumber, int secondNumber,
 }
 
 
-void DisplayOperationString(OperationType operationType, int firstNumber, int secondNumber, int? result = null)
+void DisplayOperationString(OperationType operationType, int operand1, int operand2, int? result = null)
 {
     char op = operationType switch
     {
@@ -140,18 +157,18 @@ void DisplayOperationString(OperationType operationType, int firstNumber, int se
         OperationType.Division => '/',
     };
     
-    Console.Write($"{firstNumber} {op} {secondNumber} = {(result != null ? result : "")}");
+    Console.Write($"{operand1} {op} {operand2} = {(result != null ? result : "")}");
 }
 
 
-int ComputeExpectedResult(int firstNumber, int secondNumber, OperationType operationType)
+int ComputeExpectedResult(int operand1, int operand2, OperationType operationType)
 {
     return operationType switch
     {
-        OperationType.Addition => firstNumber + secondNumber,
-        OperationType.Subtraction => firstNumber - secondNumber,
-        OperationType.Multiplication => firstNumber * secondNumber,
-        OperationType.Division => firstNumber / secondNumber
+        OperationType.Addition => operand1 + operand2,
+        OperationType.Subtraction => operand1 - operand2,
+        OperationType.Multiplication => operand1 * operand2,
+        OperationType.Division => operand1 / operand2
     };
 }
 
