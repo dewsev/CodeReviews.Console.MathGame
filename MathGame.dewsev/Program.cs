@@ -2,23 +2,18 @@ const int questionCount = 10;
 
 Random random = new Random();
 List<(OperationType OperationType, int Score)> gameHistory = [];
-bool quit = false;
 
 // TODO: Remove this from global scope?
 OperationType operationType = OperationType.None;
 int score = 0;
 bool randomizedOperations = false;
 
-Run();
 
-
-void Run()
+while (true)
 {
-    while (!quit)
-    {
-        MainMenu();
-        PlayGame();
-    }
+    MainMenu();
+    PlayGame();
+    GameOver();
 }
 
 
@@ -41,13 +36,6 @@ void Run()
 
 void PlayGame()
 {
-    // TODO: I don't like it, maybe there is some kind of other way I can come up with
-    // This should be handled inside the Run(), when quit is false, it should not even attempt to run...
-    if (quit)
-    {
-        return;
-    }
-    
     Console.Clear();
     
     for (int i = 0; i < questionCount; i++)
@@ -75,11 +63,9 @@ void PlayGame()
                 invalidAnswer = true;
                 ClearCurrentConsoleLine();
                 WriteColoredLine("Please provide a valid integer.", ConsoleColor.Red);
-            }    
+            }
         }
     }
-
-    GameOver();
 }
 
 
@@ -118,7 +104,8 @@ void MainMenu()
                     DisplayGameHistory();
                     break;
                 case 3:
-                    quit = true;
+                    Environment.Exit(0);
+                    // quit = true;
                     break;
             }
             break;
@@ -156,7 +143,7 @@ void DisplayGameHistory()
     string? readResult = Console.ReadLine()?.ToLower().Trim();
     if (readResult == "exit")
     {
-        quit = true;
+        Environment.Exit(0);
     }
     else
     {
@@ -170,7 +157,6 @@ void GameOver()
     gameHistory.Add((operationType, score));
     
     Console.Clear();
-    // TODO: Colorize the score based on how well the game went
     Console.WriteLine($"Your score: {score}/{questionCount}");
     Console.WriteLine("Press any key to go back to main menu.");
     Console.WriteLine("Type EXIT to quit.");
@@ -178,7 +164,7 @@ void GameOver()
     string? readResult = Console.ReadLine()?.ToLower().Trim();
     if (readResult == "exit")
     {
-        quit = true;
+        Environment.Exit(0);
     }
 }
 
