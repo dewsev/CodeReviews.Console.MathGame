@@ -12,7 +12,7 @@ Random random = new Random();
 // Keep operation type for each game
 List<int> gameHistory = [];
 
-OperationType operationType = OperationType.Addition;
+OperationType operationType = OperationType.None;
 int score = 0;
 bool randomizedOperations = false;
 bool quit = false;
@@ -167,16 +167,24 @@ OperationType GetOperationTypeChoiceFromUser()
     
     while (true)
     {
-        ClearCurrentConsoleLine();
-        int choice = GetNumericInputFromUser(1, 5);
-        return choice switch
+        try
         {
-            1 => OperationType.Addition,
-            2 => OperationType.Subtraction,
-            3 => OperationType.Multiplication,
-            4 => OperationType.Division,
-            5 => SetupRandomOperations(),
-        };
+            int choice = GetNumericInputFromUser(1, 5);
+            return choice switch
+            {
+                1 => OperationType.Addition,
+                2 => OperationType.Subtraction,
+                3 => OperationType.Multiplication,
+                4 => OperationType.Division,
+                5 => SetupRandomOperations(),
+            };
+        }
+        catch (ArgumentException ex)
+        {
+            ClearCurrentConsoleLine();
+            WriteColoredLine(ex.Message, ConsoleColor.Red);
+        }
+        
     }
 }
 
@@ -192,12 +200,11 @@ OperationType GetRandomOperationType()
 {
     while (true)
     {
-        int randomIndex = random.Next(Enum.GetValues<OperationType>().Length);
+        // Skip the None value
+        int randomIndex = random.Next(1, Enum.GetValues<OperationType>().Length);
         OperationType randomOperation = (OperationType)randomIndex;
         
-        // TODO: Fix this, gives the same operation few times in a row
-        // the gameHistory.Count check is wrong
-        if (gameHistory.Count == 0 || randomOperation != operationType)
+        if (operationType == OperationType.None || randomOperation != operationType)
         {
             return randomOperation;
         }
@@ -267,4 +274,4 @@ void WriteColoredLine(string text, ConsoleColor color)
 }
 
 
-enum OperationType { Addition, Subtraction, Multiplication, Division }
+enum OperationType { None, Addition, Subtraction, Multiplication, Division }
