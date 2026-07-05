@@ -1,21 +1,13 @@
-// TODO: Display goodbye message when quitting the game
-// TODO: Is ArgumentException a good Exception type?
-// TODO: Extract all input gathering to separate methods
-// TODO: Intercept keys in the menus, so the user does not need to press ENTER every time (maybe)
-
-
 const int questionCount = 10;
+
 Random random = new Random();
+List<(OperationType OperationType, int Score)> gameHistory = [];
+bool quit = false;
 
-// TODO: You should record previous games in a List and there should be an option in the menu for the user to visualize a history of previous games.
-// Keep score from each game inside a list, gameHistory[0] -> game 1, etc...
-// Keep operation type for each game
-List<int> gameHistory = [];
-
+// TODO: Remove this from global scope?
 OperationType operationType = OperationType.None;
 int score = 0;
 bool randomizedOperations = false;
-bool quit = false;
 
 Run();
 
@@ -24,12 +16,8 @@ void Run()
 {
     while (!quit)
     {
-        Console.Clear();
         MainMenu();
-        Console.Clear();
         PlayGame();
-        Console.Clear();
-        GameOver();
     }
 }
 
@@ -53,6 +41,15 @@ void Run()
 
 void PlayGame()
 {
+    // TODO: I don't like it, maybe there is some kind of other way I can come up with
+    // This should be handled inside the Run(), when quit is false, it should not even attempt to run...
+    if (quit)
+    {
+        return;
+    }
+    
+    Console.Clear();
+    
     for (int i = 0; i < questionCount; i++)
     {
         (int operand1, int operand2) = GetRandomOperands();
@@ -81,6 +78,8 @@ void PlayGame()
             }    
         }
     }
+
+    GameOver();
 }
 
 
@@ -88,51 +87,94 @@ void SetupNewGame()
 {
     score = 0;
     randomizedOperations = false;
+    // TODO: Is resetting this variable like that a good idea?
+    operationType = OperationType.None;
     operationType = GetOperationTypeChoiceFromUser();
 }
 
 
 void MainMenu()
 {
+    Console.Clear();
     Console.WriteLine("Welcome to the MathGame!");
     Console.WriteLine($"You can test your *quick maths skills* by answering {questionCount} questions.");
     Console.WriteLine("\n1.Start new game");
     Console.WriteLine("2.Show game history");
     Console.WriteLine("3.Exit\n");
 
-    try
+    while (true)
     {
-        Console.Write("Your choice: ");
-        int choice = GetNumericInputFromUser(1, 3);
-
-        switch (choice)
+        try
         {
-            case 1:
-                SetupNewGame();
-                break;
-            case 2:
-                // DisplayGameHistory();
-                break;
-            case 3:
-                quit = true;
-                break;
+            Console.Write("Your choice: ");
+            var choice = GetNumericInputFromUser(1, 3);
+
+            switch (choice)
+            {
+                case 1:
+                    SetupNewGame();
+                    break;
+                case 2:
+                    DisplayGameHistory();
+                    break;
+                case 3:
+                    quit = true;
+                    break;
+            }
+            break;
+        }
+        catch (ArgumentException ex)
+        {
+            ClearCurrentConsoleLine();
+            WriteColoredLine(ex.Message, ConsoleColor.Red);
         }
     }
-    catch (ArgumentException ex)
+}
+
+
+void DisplayGameHistory()
+{
+    Console.Clear();
+
+    if (gameHistory.Count == 0)
     {
-        WriteColoredLine(ex.Message, ConsoleColor.Red);
-    }    
+        Console.WriteLine("You have not played any games yet.");
+    }
+    else
+    {
+        Console.WriteLine("Your game history:\n");
+        for (int i = 0; i < gameHistory.Count; i++)
+        {
+            string pointPluralization = gameHistory[i].Score == 1 ? "point" : "points";
+            Console.WriteLine($"{i + 1}.{gameHistory[i].OperationType} - {gameHistory[i].Score} {pointPluralization}");
+        }    
+    }
+    
+    Console.WriteLine("\nPress any key to go back to main menu.");
+    Console.WriteLine("Type EXIT to quit.");
+    
+    string? readResult = Console.ReadLine()?.ToLower().Trim();
+    if (readResult == "exit")
+    {
+        quit = true;
+    }
+    else
+    {
+        MainMenu();
+    }
 }
 
 
 void GameOver()
 {
-    // TODO: Add score to gameHistory
+    gameHistory.Add((operationType, score));
+    
+    Console.Clear();
     // TODO: Colorize the score based on how well the game went
     Console.WriteLine($"Your score: {score}/{questionCount}");
     Console.WriteLine("Press any key to go back to main menu.");
     Console.WriteLine("Type EXIT to quit.");
-
+    
     string? readResult = Console.ReadLine()?.ToLower().Trim();
     if (readResult == "exit")
     {
@@ -158,17 +200,19 @@ int GetNumericInputFromUser(int min = int.MinValue, int max = int.MaxValue)
 
 OperationType GetOperationTypeChoiceFromUser()
 {
+    Console.Clear();
     Console.WriteLine("Choose an operation type:\n");
     Console.WriteLine("1.Addition");
     Console.WriteLine("2.Subtraction");
     Console.WriteLine("3.Multiplication");
     Console.WriteLine("4.Division");
-    Console.WriteLine("5.Random\n\n");
+    Console.WriteLine("5.Random\n");
     
     while (true)
     {
         try
         {
+            Console.Write("Your choice: ");
             int choice = GetNumericInputFromUser(1, 5);
             return choice switch
             {
@@ -184,7 +228,6 @@ OperationType GetOperationTypeChoiceFromUser()
             ClearCurrentConsoleLine();
             WriteColoredLine(ex.Message, ConsoleColor.Red);
         }
-        
     }
 }
 
@@ -200,7 +243,6 @@ OperationType GetRandomOperationType()
 {
     while (true)
     {
-        // Skip the None value
         int randomIndex = random.Next(1, Enum.GetValues<OperationType>().Length);
         OperationType randomOperation = (OperationType)randomIndex;
         
