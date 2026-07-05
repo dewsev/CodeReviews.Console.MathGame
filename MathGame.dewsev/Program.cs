@@ -16,7 +16,6 @@ OperationType operationType = OperationType.Addition;
 int score = 0;
 bool randomizedOperations = false;
 bool quit = false;
-string? readResult;
 
 Run();
 
@@ -134,7 +133,7 @@ void GameOver()
     Console.WriteLine("Press any key to go back to main menu.");
     Console.WriteLine("Type EXIT to quit.");
 
-    readResult = Console.ReadLine()?.ToLower().Trim();
+    string? readResult = Console.ReadLine()?.ToLower().Trim();
     if (readResult == "exit")
     {
         quit = true;
