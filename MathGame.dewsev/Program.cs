@@ -3,17 +3,13 @@ const int questionCount = 10;
 Random random = new Random();
 List<(OperationType OperationType, int Score)> gameHistory = [];
 
-// TODO: Remove this from global scope?
 OperationType operationType = OperationType.None;
 int score = 0;
 bool randomizedOperations = false;
 
-
 while (true)
 {
-    MainMenu();
     PlayGame();
-    GameOver();
 }
 
 
@@ -36,7 +32,8 @@ while (true)
 
 void PlayGame()
 {
-    Console.Clear();
+    MainMenu();
+    operationType = GetOperationTypeChoiceFromUser();
     
     for (int i = 0; i < questionCount; i++)
     {
@@ -66,16 +63,17 @@ void PlayGame()
             }
         }
     }
+    
+    gameHistory.Add((operationType, score));
+    GameOver();
 }
 
 
-void SetupNewGame()
+void ResetGameState()
 {
     score = 0;
     randomizedOperations = false;
-    // TODO: Is resetting this variable like that a good idea?
     operationType = OperationType.None;
-    operationType = GetOperationTypeChoiceFromUser();
 }
 
 
@@ -93,19 +91,18 @@ void MainMenu()
         try
         {
             Console.Write("Your choice: ");
-            var choice = GetNumericInputFromUser(1, 3);
+            int choice = GetNumericInputFromUser(1, 3);
 
             switch (choice)
             {
                 case 1:
-                    SetupNewGame();
+                    ResetGameState();
                     break;
                 case 2:
                     DisplayGameHistory();
                     break;
                 case 3:
                     Environment.Exit(0);
-                    // quit = true;
                     break;
             }
             break;
@@ -116,6 +113,8 @@ void MainMenu()
             WriteColoredLine(ex.Message, ConsoleColor.Red);
         }
     }
+    
+    Console.Clear();
 }
 
 
@@ -154,8 +153,6 @@ void DisplayGameHistory()
 
 void GameOver()
 {
-    gameHistory.Add((operationType, score));
-    
     Console.Clear();
     Console.WriteLine($"Your score: {score}/{questionCount}");
     Console.WriteLine("Press any key to go back to main menu.");
@@ -281,7 +278,7 @@ int ComputeExpectedResult(int operand1, int operand2, OperationType operationTyp
         OperationType.Addition => operand1 + operand2,
         OperationType.Subtraction => operand1 - operand2,
         OperationType.Multiplication => operand1 * operand2,
-        OperationType.Division => operand1 / operand2
+        OperationType.Division => operand1 / operand2,
     };
 }
 
