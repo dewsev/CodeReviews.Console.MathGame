@@ -1,10 +1,13 @@
 const int questionCount = 10;
-
 Random random = new Random();
-List<(OperationType OperationType, int Score)> gameHistory = [];
 
 OperationType operationType = OperationType.None;
+DifficultyLevel difficulty = DifficultyLevel.Easy;
+List<(OperationType OperationType, DifficultyLevel Difficulty, int Score)> gameHistory = [];
+
 int score = 0;
+int operandMin = 0;
+int operandMax = 0;
 bool randomizedOperations = false;
 
 while (true)
@@ -13,16 +16,22 @@ while (true)
 }
 
 
-(int, int) GetRandomOperands()
+int GetRandomOperand()
 {
-    int operand1 = random.Next(1, 101);
-    int operand2 = random.Next(1, 101);
+    return random.Next(operandMin, operandMax);
+}
+
+
+(int, int) GetOperands()
+{
+    int operand1 = GetRandomOperand();
+    int operand2 = GetRandomOperand();
 
     if (operationType == OperationType.Division)
     {
         while (operand1 % operand2 != 0)
         {
-            operand2 = random.Next(1, 101);
+            operand2 = GetRandomOperand();
         }
     }
 
@@ -34,10 +43,13 @@ void PlayGame()
 {
     MainMenu();
     operationType = GetOperationTypeChoiceFromUser();
+    difficulty = GetDifficultyChoiceFromUser();
+
+    SetOperandRange();
     
     for (int i = 0; i < questionCount; i++)
     {
-        (int operand1, int operand2) = GetRandomOperands();
+        (int operand1, int operand2) = GetOperands();
 
         bool invalidAnswer = true;
         while (invalidAnswer)
@@ -64,8 +76,28 @@ void PlayGame()
         }
     }
     
-    gameHistory.Add((operationType, score));
+    gameHistory.Add((operationType, difficulty, score));
     GameOver();
+}
+
+
+void SetOperandRange()
+{
+    switch (difficulty)
+    {
+        case DifficultyLevel.Easy:
+            operandMin = 1;
+            operandMax = 11;
+            break;
+        case DifficultyLevel.Hard:
+            operandMin = 10;
+            operandMax = 101;
+            break;
+        case DifficultyLevel.VeryHard:
+            operandMin = 100;
+            operandMax = 1001;
+            break;
+    }
 }
 
 
@@ -132,14 +164,16 @@ void DisplayGameHistory()
         for (int i = 0; i < gameHistory.Count; i++)
         {
             string pointPluralization = gameHistory[i].Score == 1 ? "point" : "points";
-            Console.WriteLine($"{i + 1}.{gameHistory[i].OperationType} - {gameHistory[i].Score} {pointPluralization}");
+            Console.Write($"{i + 1}.{gameHistory[i].OperationType} - ");
+            Console.Write($"{difficulty} - ");
+            Console.Write($"{gameHistory[i].Score} {pointPluralization}\n");
         }    
     }
     
     Console.WriteLine("\nPress any key to go back to main menu.");
     Console.WriteLine("Type EXIT to quit.");
     
-    string? readResult = Console.ReadLine()?.ToLower().Trim();
+    string? readResult = Console.ReadLine()?.ToLowerInvariant().Trim();
     if (readResult == "exit")
     {
         Quit();
@@ -158,7 +192,7 @@ void GameOver()
     Console.WriteLine("Press any key to go back to main menu.");
     Console.WriteLine("Type EXIT to quit.");
     
-    string? readResult = Console.ReadLine()?.ToLower().Trim();
+    string? readResult = Console.ReadLine()?.ToLowerInvariant().Trim();
     if (readResult == "exit")
     {
         Quit();
@@ -212,7 +246,37 @@ OperationType GetOperationTypeChoiceFromUser()
                 2 => OperationType.Subtraction,
                 3 => OperationType.Multiplication,
                 4 => OperationType.Division,
-                5 => SetupRandomOperations(),
+                5 => SetupRandomOperations()
+            };
+        }
+        catch (ArgumentException ex)
+        {
+            ClearCurrentConsoleLine();
+            WriteColoredLine(ex.Message, ConsoleColor.Red);
+        }
+    }
+}
+
+
+DifficultyLevel GetDifficultyChoiceFromUser()
+{
+    Console.Clear();
+    Console.WriteLine("Choose a difficulty level:\n");
+    Console.WriteLine("1.Easy");
+    Console.WriteLine("2.Hard");
+    Console.WriteLine("3.Very hard\n");
+    
+    while (true)
+    {
+        try
+        {
+            Console.Write("Your choice: ");
+            int choice = GetNumericInputFromUser(1, 3);
+            return choice switch
+            {
+                1 => DifficultyLevel.Easy,
+                2 => DifficultyLevel.Hard,
+                3 => DifficultyLevel.VeryHard
             };
         }
         catch (ArgumentException ex)
@@ -250,7 +314,7 @@ void CheckAnswer(int operand1, int operand2, int answer)
 {
     ClearCurrentConsoleLine();
 
-    int expectedResult = ComputeExpectedResult(operand1, operand2, operationType);
+    int expectedResult = ComputeExpectedResult(operand1, operand2);
     
     DisplayOperationString(operand1, operand2, answer);
     Console.Write("\t");
@@ -273,21 +337,21 @@ void DisplayOperationString(int operand1, int operand2, int? result = null)
         OperationType.Addition => '+',
         OperationType.Subtraction => '-',
         OperationType.Multiplication => 'x',
-        OperationType.Division => '/',
+        OperationType.Division => '/'
     };
     
     Console.Write($"{operand1} {op} {operand2} = {(result != null ? result : "")}");
 }
 
 
-int ComputeExpectedResult(int operand1, int operand2, OperationType operationType)
+int ComputeExpectedResult(int operand1, int operand2)
 {
     return operationType switch
     {
         OperationType.Addition => operand1 + operand2,
         OperationType.Subtraction => operand1 - operand2,
         OperationType.Multiplication => operand1 * operand2,
-        OperationType.Division => operand1 / operand2,
+        OperationType.Division => operand1 / operand2
     };
 }
 
@@ -309,3 +373,4 @@ void WriteColoredLine(string text, ConsoleColor color)
 
 
 enum OperationType { None, Addition, Subtraction, Multiplication, Division }
+enum DifficultyLevel { Easy, Hard, VeryHard }

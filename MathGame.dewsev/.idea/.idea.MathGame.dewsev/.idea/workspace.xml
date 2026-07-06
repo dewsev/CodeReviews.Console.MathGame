@@ -206,7 +206,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783248897271</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Add Quit method">
+      <option name="closed" value="true" />
+      <created>1783373353027</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1783373353027</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -226,7 +234,8 @@
     <MESSAGE value="Show only int result for division" />
     <MESSAGE value="Remove readResult from global scope" />
     <MESSAGE value="Add None OperationType" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add None OperationType" />
+    <MESSAGE value="Add Quit method" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Quit method" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
