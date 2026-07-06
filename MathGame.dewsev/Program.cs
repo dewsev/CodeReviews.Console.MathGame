@@ -102,7 +102,7 @@ void MainMenu()
                     DisplayGameHistory();
                     break;
                 case 3:
-                    Environment.Exit(0);
+                    Quit();
                     break;
             }
             break;
@@ -142,7 +142,7 @@ void DisplayGameHistory()
     string? readResult = Console.ReadLine()?.ToLower().Trim();
     if (readResult == "exit")
     {
-        Environment.Exit(0);
+        Quit();
     }
     else
     {
@@ -161,8 +161,17 @@ void GameOver()
     string? readResult = Console.ReadLine()?.ToLower().Trim();
     if (readResult == "exit")
     {
-        Environment.Exit(0);
+        Quit();
     }
+}
+
+
+void Quit()
+{
+    Console.Clear();
+    Console.WriteLine("Thank you for playing the Math Game!");
+    Console.WriteLine("See you next time.");
+    Environment.Exit(0);
 }
 
 
