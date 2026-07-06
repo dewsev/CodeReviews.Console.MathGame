@@ -222,7 +222,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783374825816</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Reorganize code">
+      <option name="closed" value="true" />
+      <created>1783375525534</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1783375525534</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -244,7 +252,8 @@
     <MESSAGE value="Add None OperationType" />
     <MESSAGE value="Add Quit method" />
     <MESSAGE value="Add difficulty levels" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add difficulty levels" />
+    <MESSAGE value="Reorganize code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reorganize code" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

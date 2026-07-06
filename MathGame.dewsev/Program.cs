@@ -197,8 +197,12 @@ void DisplayGameHistory()
         for (int i = 0; i < gameHistory.Count; i++)
         {
             string pointPluralization = gameHistory[i].Score == 1 ? "point" : "points";
+            
+            DifficultyLevel difficultyLevel = gameHistory[i].Difficulty;
+            string difficultyDisplayString = difficultyLevel == DifficultyLevel.VeryHard ? "Very hard" : difficulty.ToString();
+            
             Console.Write($"{i + 1}.{gameHistory[i].OperationType} - ");
-            Console.Write($"{difficulty} - ");
+            Console.Write($"{difficultyDisplayString} - ");
             Console.Write($"{gameHistory[i].Score} {pointPluralization}\n");
         }    
     }
