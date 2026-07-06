@@ -16,32 +16,10 @@ while (true)
 }
 
 
-int GetRandomOperand()
-{
-    return random.Next(operandMin, operandMax);
-}
-
-
-(int, int) GetOperands()
-{
-    int operand1 = GetRandomOperand();
-    int operand2 = GetRandomOperand();
-
-    if (operationType == OperationType.Division)
-    {
-        while (operand1 % operand2 != 0)
-        {
-            operand2 = GetRandomOperand();
-        }
-    }
-
-    return (operand1, operand2);
-}
-
-
 void PlayGame()
 {
     MainMenu();
+
     operationType = GetOperationTypeChoiceFromUser();
     difficulty = GetDifficultyChoiceFromUser();
 
@@ -81,6 +59,61 @@ void PlayGame()
 }
 
 
+void CheckAnswer(int operand1, int operand2, int answer)
+{
+    ClearCurrentConsoleLine();
+
+    int expectedResult = ComputeExpectedResult(operand1, operand2);
+    
+    DisplayOperationString(operand1, operand2, answer);
+    Console.Write("\t");
+    if (expectedResult == answer)
+    {
+        score++;
+        WriteColoredLine("Correct!", ConsoleColor.Green);
+    }
+    else
+    {
+        WriteColoredLine($"Wrong! It is {expectedResult}.", ConsoleColor.Red);
+    }
+}
+
+
+int ComputeExpectedResult(int operand1, int operand2)
+{
+    return operationType switch
+    {
+        OperationType.Addition => operand1 + operand2,
+        OperationType.Subtraction => operand1 - operand2,
+        OperationType.Multiplication => operand1 * operand2,
+        OperationType.Division => operand1 / operand2
+    };
+}
+
+
+(int, int) GetOperands()
+{
+    int operand1 = GetRandomOperand();
+    int operand2 = GetRandomOperand();
+
+    if (operationType == OperationType.Division)
+    {
+        while (operand1 % operand2 != 0)
+        {
+            operand2 = GetRandomOperand();
+        }
+    }
+
+    return (operand1, operand2);
+}
+
+
+int GetRandomOperand()
+{
+    return random.Next(operandMin, operandMax);
+}
+
+
 void SetOperandRange()
 {
     switch (difficulty)
@@ -98,14 +131,6 @@ void SetOperandRange()
             operandMax = 1001;
             break;
     }
-}
-
-
-void ResetGameState()
-{
-    score = 0;
-    randomizedOperations = false;
-    operationType = OperationType.None;
 }
 
 
@@ -147,6 +172,14 @@ void MainMenu()
     }
     
     Console.Clear();
+}
+
+
+void ResetGameState()
+{
+    score = 0;
+    randomizedOperations = false;
+    operationType = OperationType.None;
 }
 
 
@@ -271,12 +304,12 @@ DifficultyLevel GetDifficultyChoiceFromUser()
         try
         {
             Console.Write("Your choice: ");
-            int choice = GetNumericInputFromUser(1, 3);
-            return choice switch
+            string? readResult = Console.ReadLine();
+            return readResult switch
             {
-                1 => DifficultyLevel.Easy,
-                2 => DifficultyLevel.Hard,
-                3 => DifficultyLevel.VeryHard
+                "1" => DifficultyLevel.Easy,
+                "2" => DifficultyLevel.Hard,
+                "3" => DifficultyLevel.VeryHard,
             };
         }
         catch (ArgumentException ex)
@@ -310,26 +343,6 @@ OperationType GetRandomOperationType()
 }
 
 
-void CheckAnswer(int operand1, int operand2, int answer)
-{
-    ClearCurrentConsoleLine();
-
-    int expectedResult = ComputeExpectedResult(operand1, operand2);
-    
-    DisplayOperationString(operand1, operand2, answer);
-    Console.Write("\t");
-    if (expectedResult == answer)
-    {
-        score++;
-        WriteColoredLine("Correct!", ConsoleColor.Green);
-    }
-    else
-    {
-        WriteColoredLine($"Wrong! It is {expectedResult}.", ConsoleColor.Red);
-    }
-}
-
-
 void DisplayOperationString(int operand1, int operand2, int? result = null)
 {
     char op = operationType switch
@@ -341,18 +354,6 @@ void DisplayOperationString(int operand1, int operand2, int? result = null)
     };
     
     Console.Write($"{operand1} {op} {operand2} = {(result != null ? result : "")}");
-}
-
-
-int ComputeExpectedResult(int operand1, int operand2)
-{
-    return operationType switch
-    {
-        OperationType.Addition => operand1 + operand2,
-        OperationType.Subtraction => operand1 - operand2,
-        OperationType.Multiplication => operand1 * operand2,
-        OperationType.Division => operand1 / operand2
-    };
 }
 
 

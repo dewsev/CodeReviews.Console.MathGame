@@ -59,7 +59,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "XThreadsFramesViewSplitterKey": "0.5138122",
+    "XThreadsFramesViewSplitterKey": "0.54254144",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "main",
@@ -214,7 +214,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783373353027</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Add difficulty levels">
+      <option name="closed" value="true" />
+      <created>1783374825816</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1783374825816</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,7 +243,8 @@
     <MESSAGE value="Remove readResult from global scope" />
     <MESSAGE value="Add None OperationType" />
     <MESSAGE value="Add Quit method" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Quit method" />
+    <MESSAGE value="Add difficulty levels" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add difficulty levels" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
