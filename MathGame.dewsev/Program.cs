@@ -1,14 +1,14 @@
 const int questionCount = 10;
-Random random = new Random();
-
-OperationType operationType = OperationType.None;
-DifficultyLevel difficulty = DifficultyLevel.Easy;
-List<(OperationType OperationType, DifficultyLevel Difficulty, int Score)> gameHistory = [];
 
 int score = 0;
 int operandMin = 0;
 int operandMax = 0;
 bool randomizedOperations = false;
+
+Random random = new Random();
+OperationType operationType = OperationType.None;
+DifficultyLevel difficulty = DifficultyLevel.Easy;
+List<(OperationType OperationType, DifficultyLevel Difficulty, int Seconds, int Score)> gameHistory = [];
 
 while (true)
 {
@@ -24,7 +24,13 @@ void PlayGame()
     difficulty = GetDifficultyChoiceFromUser();
 
     SetOperandRange();
-    
+
+    int secondsElapsed = 0;
+    _ = new Timer(
+        _ => secondsElapsed++,
+        null,
+        0,
+        1000);
     for (int i = 0; i < questionCount; i++)
     {
         (int operand1, int operand2) = GetOperands();
@@ -53,9 +59,8 @@ void PlayGame()
             }
         }
     }
-    
-    gameHistory.Add((operationType, difficulty, score));
-    GameOver();
+    gameHistory.Add((operationType, difficulty, secondsElapsed, score));
+    GameOver(secondsElapsed);
 }
 
 
@@ -203,6 +208,7 @@ void DisplayGameHistory()
             
             Console.Write($"{i + 1}.{gameHistory[i].OperationType} - ");
             Console.Write($"{difficultyDisplayString} - ");
+            Console.Write($"{TimeSpan.FromSeconds(gameHistory[i].Seconds)} - ");
             Console.Write($"{gameHistory[i].Score} {pointPluralization}\n");
         }    
     }
@@ -222,9 +228,9 @@ void DisplayGameHistory()
 }
 
 
-void GameOver()
+void GameOver(int secondsElapsed)
 {
-    Console.Clear();
+    Console.WriteLine($"\nTime: {TimeSpan.FromSeconds(secondsElapsed)}");
     Console.WriteLine($"Your score: {score}/{questionCount}");
     Console.WriteLine("Press any key to go back to main menu.");
     Console.WriteLine("Type EXIT to quit.");
