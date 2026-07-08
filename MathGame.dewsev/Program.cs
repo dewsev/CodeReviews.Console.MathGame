@@ -1,93 +1,105 @@
 const int questionCount = 10;
 
-int score = 0;
 int operandMin = 0;
 int operandMax = 0;
-bool randomizedOperations = false;
+
+int score = 0;
+int secondsElapsed = 0;
+
+OperationType gameOperationType = OperationType.None;
+DifficultyLevel difficulty = DifficultyLevel.Easy;
 
 Random random = new Random();
-OperationType operationType = OperationType.None;
-DifficultyLevel difficulty = DifficultyLevel.Easy;
 List<(OperationType OperationType, DifficultyLevel Difficulty, int Seconds, int Score)> gameHistory = [];
 
 while (true)
 {
-    PlayGame();
+    Game();
 }
 
 
-void PlayGame()
+void Game()
 {
     MainMenu();
-
-    operationType = GetOperationTypeChoiceFromUser();
-    difficulty = GetDifficultyChoiceFromUser();
-
-    Console.Clear();
     
-    SetOperandRange();
-    
-    int secondsElapsed = 0;
     _ = new Timer(
         _ => secondsElapsed++,
         null,
         0,
         1000);
+
+    OperationType questionOperationType = OperationType.None;
+    questionOperationType = gameOperationType == OperationType.Random ? GetRandomOperationType(questionOperationType) : gameOperationType;
+    
+    Console.Clear();
     
     for (int i = 0; i < questionCount; i++)
     {
-        (int operand1, int operand2) = GetOperands();
-
-        bool invalidAnswer = true;
-        while (invalidAnswer)
+        if (gameOperationType == OperationType.Random)
         {
-            try
-            {
-                DisplayOperationString(operand1, operand2);
-                int answer = GetNumericInputFromUser();
-
-                CheckAnswer(operand1, operand2, answer);
-                if (randomizedOperations)
-                {
-                    operationType = GetRandomOperationType();
-                }
-
-                invalidAnswer = false;
-            }
-            catch (ArgumentException)
-            {
-                invalidAnswer = true;
-                ClearCurrentConsoleLine();
-                WriteColoredLine("Please provide a valid integer.", ConsoleColor.Red);
-            }
+            questionOperationType = GetRandomOperationType(questionOperationType);
         }
+        
+        (int operand1, int operand2) = GetOperands(questionOperationType, difficulty);
+
+        AskQuestion(operand1, operand2, questionOperationType);
     }
-    gameHistory.Add((operationType, difficulty, secondsElapsed, score));
-    GameOver(secondsElapsed);
+    
+    gameHistory.Add((gameOperationType, difficulty, secondsElapsed, score));
+    GameOver();
 }
 
 
-void CheckAnswer(int operand1, int operand2, int answer)
+void AskQuestion(int operand1, int operand2, OperationType operationType)
+{
+    while (true)
+    {
+        DisplayOperationString(operand1, operand2, operationType);
+            
+        try
+        {
+            int answer = GetNumericInputFromUser();
+            bool correct = ValidateAnswer(operand1, operand2, operationType, answer);
+
+            DisplayOperationString(operand1, operand2, operationType, answer);
+            Console.Write("\t");
+            if (correct)
+            {
+                score++;
+                WriteColoredLine("Correct!", ConsoleColor.Green);
+            }
+            else
+            {
+                int expectedResult = ComputeExpectedResult(operand1, operand2, operationType);
+                WriteColoredLine($"Wrong! It is {expectedResult}.", ConsoleColor.Red);
+            }
+                
+            break;
+        }
+        catch (ArgumentException)
+        {
+            ClearCurrentConsoleLine();
+            WriteColoredLine("Please provide a valid integer.", ConsoleColor.Red);
+        }
+    }
+}
+
+
+bool ValidateAnswer(int operand1, int operand2, OperationType operationType, int answer)
 {
     ClearCurrentConsoleLine();
 
-    int expectedResult = ComputeExpectedResult(operand1, operand2);
+    int expected = ComputeExpectedResult(operand1, operand2, operationType);
+    if (expected == answer)
+    {
+        return true;
+    }
     
-    DisplayOperationString(operand1, operand2, answer);
-    Console.Write("\t");
-    if (expectedResult == answer)
-    {
-        score++;
-        WriteColoredLine("Correct!", ConsoleColor.Green);
-    }
-    else
-    {
-        WriteColoredLine($"Wrong! It is {expectedResult}.", ConsoleColor.Red);
-    }
+    return false;
 }
 
 
-int ComputeExpectedResult(int operand1, int operand2)
+int ComputeExpectedResult(int operand1, int operand2, OperationType operationType)
 {
     return operationType switch
     {
@@ -99,7 +111,7 @@ int ComputeExpectedResult(int operand1, int operand2)
 }
 
 
-(int, int) GetOperands()
+(int, int) GetOperands(OperationType operationType, DifficultyLevel difficulty)
 {
     int operand1 = GetRandomOperand();
     int operand2 = GetRandomOperand();
@@ -184,7 +196,7 @@ void MainMenu()
             switch (choice)
             {
                 case 1:
-                    ResetGameState();
+                    SetupGame();
                     break;
                 case 2:
                     DisplayGameHistory();
@@ -201,16 +213,16 @@ void MainMenu()
             WriteColoredLine(ex.Message, ConsoleColor.Red);
         }
     }
-    
-    Console.Clear();
 }
 
 
-void ResetGameState()
+void SetupGame()
 {
     score = 0;
-    randomizedOperations = false;
-    operationType = OperationType.None;
+    secondsElapsed = 0;
+    gameOperationType = GetOperationTypeChoiceFromUser();
+    difficulty = GetDifficultyChoiceFromUser();
+    SetOperandRange();
 }
 
 
@@ -251,11 +263,11 @@ void DisplayGameHistory()
 }
 
 
-void GameOver(int secondsElapsed)
+void GameOver()
 {
     Console.WriteLine($"\nTime: {TimeSpan.FromSeconds(secondsElapsed)}");
-    Console.WriteLine($"Your score: {score}/{questionCount}");
-    Console.WriteLine("Press any key to go back to main menu.");
+    Console.WriteLine($"Score: {score}/{questionCount}");
+    Console.WriteLine("\nPress any key to go back to main menu.");
     Console.WriteLine("Type EXIT to quit.");
     
     string? readResult = Console.ReadLine()?.ToLowerInvariant().Trim();
@@ -312,7 +324,7 @@ OperationType GetOperationTypeChoiceFromUser()
                 2 => OperationType.Subtraction,
                 3 => OperationType.Multiplication,
                 4 => OperationType.Division,
-                5 => SetupRandomOperations()
+                5 => OperationType.Random
             };
         }
         catch (ArgumentException ex)
@@ -354,21 +366,15 @@ DifficultyLevel GetDifficultyChoiceFromUser()
 }
 
 
-OperationType SetupRandomOperations()
-{
-    randomizedOperations = true;
-    return GetRandomOperationType();
-}
-
-
-OperationType GetRandomOperationType()
+OperationType GetRandomOperationType(OperationType currentOperationType)
 {
     while (true)
     {
-        int randomIndex = random.Next(1, Enum.GetValues<OperationType>().Length);
+        // Should never return OperationType.None and OperationType.Random - skip them
+        int randomIndex = random.Next(1, Enum.GetValues<OperationType>().Length - 1);
         OperationType randomOperation = (OperationType)randomIndex;
         
-        if (operationType == OperationType.None || randomOperation != operationType)
+        if (currentOperationType == OperationType.None || randomOperation != currentOperationType)
         {
             return randomOperation;
         }
@@ -376,7 +382,7 @@ OperationType GetRandomOperationType()
 }
 
 
-void DisplayOperationString(int operand1, int operand2, int? result = null)
+void DisplayOperationString(int operand1, int operand2, OperationType operationType, int? result = null)
 {
     char op = operationType switch
     {
@@ -406,5 +412,5 @@ void WriteColoredLine(string text, ConsoleColor color)
 }
 
 
-enum OperationType { None, Addition, Subtraction, Multiplication, Division }
+enum OperationType { None, Addition, Subtraction, Multiplication, Division, Random }
 enum DifficultyLevel { Easy, Medium, Hard }

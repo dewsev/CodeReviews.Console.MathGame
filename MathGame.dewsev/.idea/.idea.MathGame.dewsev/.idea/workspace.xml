@@ -59,7 +59,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.54254144&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5575221&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
@@ -109,7 +109,7 @@
       <workItem from="1782990041679" duration="5409000" />
       <workItem from="1783023991084" duration="6922000" />
       <workItem from="1783163397516" duration="9275000" />
-      <workItem from="1783466269197" duration="5015000" />
+      <workItem from="1783466269197" duration="7810000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project setup">
       <option name="closed" value="true" />
@@ -247,7 +247,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783468462366</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Change difficulty levels">
+      <option name="closed" value="true" />
+      <created>1783471302452</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1783471302452</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -272,7 +280,8 @@
     <MESSAGE value="Reorganize code" />
     <MESSAGE value="Fix game history difficulty" />
     <MESSAGE value="Add a timer" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add a timer" />
+    <MESSAGE value="Change difficulty levels" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change difficulty levels" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -289,19 +298,6 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Program.cs</url>
-          <line>126</line>
-          <properties documentPath="$PROJECT_DIR$/Program.cs" containingFunctionPresentation="Local function 'GetOperands'">
-            <startOffsets>
-              <option value="3121" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3160" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
