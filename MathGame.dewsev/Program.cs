@@ -23,14 +23,17 @@ void PlayGame()
     operationType = GetOperationTypeChoiceFromUser();
     difficulty = GetDifficultyChoiceFromUser();
 
+    Console.Clear();
+    
     SetOperandRange();
-
+    
     int secondsElapsed = 0;
     _ = new Timer(
         _ => secondsElapsed++,
         null,
         0,
         1000);
+    
     for (int i = 0; i < questionCount; i++)
     {
         (int operand1, int operand2) = GetOperands();
@@ -101,11 +104,34 @@ int ComputeExpectedResult(int operand1, int operand2)
     int operand1 = GetRandomOperand();
     int operand2 = GetRandomOperand();
 
-    if (operationType == OperationType.Division)
+    if (difficulty == DifficultyLevel.Hard && operationType != OperationType.Division)
     {
-        while (operand1 % operand2 != 0)
+        while (operand1 % 10 == 0)
+        {
+            operand1 = GetRandomOperand();
+        }
+        
+        while (operand2 % 10 == 0)
         {
             operand2 = GetRandomOperand();
+        }
+    }
+
+    if (operationType == OperationType.Division)
+    {
+        while (operand1 % operand2 != 0 || operand1 / operand2 == 1 || operand2 == 1)
+        {
+            operand1 = GetRandomOperand();
+            operand2 = GetRandomOperand();
+            
+            if (difficulty == DifficultyLevel.Hard)
+            {
+                while (operand1 % 10 == 0)
+                {
+                    operand1 = GetRandomOperand();
+                    operand2 = GetRandomOperand();
+                }
+            }
         }
     }
 
@@ -127,12 +153,12 @@ void SetOperandRange()
             operandMin = 1;
             operandMax = 11;
             break;
-        case DifficultyLevel.Hard:
-            operandMin = 10;
+        case DifficultyLevel.Medium:
+            operandMin = 1;
             operandMax = 101;
             break;
-        case DifficultyLevel.VeryHard:
-            operandMin = 100;
+        case DifficultyLevel.Hard:
+            operandMin = 1;
             operandMax = 1001;
             break;
     }
@@ -203,11 +229,8 @@ void DisplayGameHistory()
         {
             string pointPluralization = gameHistory[i].Score == 1 ? "point" : "points";
             
-            DifficultyLevel difficultyLevel = gameHistory[i].Difficulty;
-            string difficultyDisplayString = difficultyLevel == DifficultyLevel.VeryHard ? "Very hard" : difficulty.ToString();
-            
             Console.Write($"{i + 1}.{gameHistory[i].OperationType} - ");
-            Console.Write($"{difficultyDisplayString} - ");
+            Console.Write($"{gameHistory[i].Difficulty} - ");
             Console.Write($"{TimeSpan.FromSeconds(gameHistory[i].Seconds)} - ");
             Console.Write($"{gameHistory[i].Score} {pointPluralization}\n");
         }    
@@ -306,20 +329,20 @@ DifficultyLevel GetDifficultyChoiceFromUser()
     Console.Clear();
     Console.WriteLine("Choose a difficulty level:\n");
     Console.WriteLine("1.Easy");
-    Console.WriteLine("2.Hard");
-    Console.WriteLine("3.Very hard\n");
+    Console.WriteLine("2.Medium");
+    Console.WriteLine("3.Hard\n");
     
     while (true)
     {
         try
         {
             Console.Write("Your choice: ");
-            string? readResult = Console.ReadLine();
-            return readResult switch
+            int choice = GetNumericInputFromUser(1, 3);
+            return choice switch
             {
-                "1" => DifficultyLevel.Easy,
-                "2" => DifficultyLevel.Hard,
-                "3" => DifficultyLevel.VeryHard,
+                1 => DifficultyLevel.Easy,
+                2 => DifficultyLevel.Medium,
+                3 => DifficultyLevel.Hard,
             };
         }
         catch (ArgumentException ex)
@@ -384,4 +407,4 @@ void WriteColoredLine(string text, ConsoleColor color)
 
 
 enum OperationType { None, Addition, Subtraction, Multiplication, Division }
-enum DifficultyLevel { Easy, Hard, VeryHard }
+enum DifficultyLevel { Easy, Medium, Hard }
