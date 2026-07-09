@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices.JavaScript;
+
 const int questionCount = 10;
 
 int operandMin = 0;
@@ -10,7 +12,7 @@ OperationType gameOperationType = OperationType.None;
 DifficultyLevel difficulty = DifficultyLevel.Easy;
 
 Random random = new Random();
-List<(OperationType OperationType, DifficultyLevel Difficulty, int Seconds, int Score)> gameHistory = [];
+List<GameHistoryEntry> gameHistory = [];
 
 while (true)
 {
@@ -22,7 +24,7 @@ void Game()
 {
     MainMenu();
     
-    _ = new Timer(
+    using Timer timer = new Timer(
         _ => secondsElapsed++,
         null,
         0,
@@ -40,12 +42,19 @@ void Game()
             questionOperationType = GetRandomOperationType(questionOperationType);
         }
         
-        (int operand1, int operand2) = GetOperands(questionOperationType, difficulty);
+        (int operand1, int operand2) = GetOperands(questionOperationType);
 
         AskQuestion(operand1, operand2, questionOperationType);
     }
     
-    gameHistory.Add((gameOperationType, difficulty, secondsElapsed, score));
+    gameHistory.Add(new GameHistoryEntry
+    {
+        Date = DateTime.Now,
+        OperationType = gameOperationType,
+        Difficulty = difficulty,
+        Time = TimeSpan.FromSeconds(secondsElapsed),
+        Score = score
+    });
     GameOver();
 }
 
@@ -90,12 +99,7 @@ bool ValidateAnswer(int operand1, int operand2, OperationType operationType, int
     ClearCurrentConsoleLine();
 
     int expected = ComputeExpectedResult(operand1, operand2, operationType);
-    if (expected == answer)
-    {
-        return true;
-    }
-    
-    return false;
+    return expected == answer;
 }
 
 
@@ -111,7 +115,7 @@ int ComputeExpectedResult(int operand1, int operand2, OperationType operationTyp
 }
 
 
-(int, int) GetOperands(OperationType operationType, DifficultyLevel difficulty)
+(int, int) GetOperands(OperationType operationType)
 {
     int operand1 = GetRandomOperand();
     int operand2 = GetRandomOperand();
@@ -239,12 +243,16 @@ void DisplayGameHistory()
         Console.WriteLine("Your game history:\n");
         for (int i = 0; i < gameHistory.Count; i++)
         {
-            string pointPluralization = gameHistory[i].Score == 1 ? "point" : "points";
+            GameHistoryEntry entry = gameHistory[i];
             
-            Console.Write($"{i + 1}.{gameHistory[i].OperationType} - ");
-            Console.Write($"{gameHistory[i].Difficulty} - ");
-            Console.Write($"{TimeSpan.FromSeconds(gameHistory[i].Seconds)} - ");
-            Console.Write($"{gameHistory[i].Score} {pointPluralization}\n");
+            string pointPluralization = entry.Score == 1 ? "point" : "points";
+
+            Console.Write($"{i + 1}.");
+            Console.Write($"{entry.Date:dd-MM-yyyy HH:mm:ss} - ");
+            Console.Write($"{entry.OperationType} - ");
+            Console.Write($"{entry.Difficulty} - ");
+            Console.Write($"{entry.Time} - ");
+            Console.Write($"{entry.Score} {pointPluralization}\n");
         }    
     }
     
@@ -414,3 +422,12 @@ void WriteColoredLine(string text, ConsoleColor color)
 
 enum OperationType { None, Addition, Subtraction, Multiplication, Division, Random }
 enum DifficultyLevel { Easy, Medium, Hard }
+
+class GameHistoryEntry
+{
+    public DateTime Date { get; init; }
+    public OperationType OperationType { get; init; }
+    public DifficultyLevel Difficulty { get; init; }
+    public TimeSpan Time { get; init; }
+    public int Score { get; init; }
+}
